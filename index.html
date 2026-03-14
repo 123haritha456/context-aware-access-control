@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Context-Aware Access Control</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Consolas',monospace;}
+body{
+  height:100vh;
+  background:black;
+  color:#0ff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+}
+.bg-animation{
+  position:absolute;
+  width:200%;
+  height:200%;
+  background:linear-gradient(45deg,#00f,#f0f,#00f);
+  background-size:400% 400%;
+  animation:bgMove 8s infinite;
+  filter:blur(100px);
+  z-index:0;
+}
+@keyframes bgMove{
+  0%{transform:translate(-20%,-20%)}
+  50%{transform:translate(-10%,-30%)}
+  100%{transform:translate(-20%,-20%)}
+}
+
+.center-container{
+  position:relative;
+  z-index:1;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100%;
+  width:100%;
+}
+
+.container{
+  width:400px;
+  text-align:center;
+}
+
+.typing-title{
+  border-right:3px solid #0ff;
+  white-space:nowrap;
+  overflow:hidden;
+  width:0;
+  animation:typing 3s steps(40,end) forwards, blink .8s infinite;
+  margin-bottom:25px;
+  text-shadow:0 0 15px #0ff,0 0 25px #0ff;
+  font-size:1.5em;
+}
+@keyframes typing{to{width:100%}}
+@keyframes blink{50%{border-color:transparent}}
+
+.login-card{
+  padding:25px;
+  border-radius:15px;
+  backdrop-filter:blur(20px);
+  background:rgba(0,0,0,0.6);
+  border:1px solid #0ff;
+  box-shadow:0 0 40px #0ff;
+  transition:.3s;
+}
+.login-card input{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border:none;
+  border-radius:8px;
+  background:#020617;
+  color:#0ff;
+  outline:none;
+  box-shadow:0 0 10px #0ff;
+  transition:.3s;
+}
+.login-card input:focus{
+  box-shadow:0 0 20px #0ff,#ff0 0 0 10px;
+}
+button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:8px;
+  background:#0ff;
+  color:black;
+  cursor:pointer;
+  font-weight:bold;
+  font-size:15px;
+  transition:.3s;
+  box-shadow:0 0 10px #0ff;
+}
+button:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 20px #ff0,0 0 30px #0ff;
+}
+#errorMsg{
+  color:#ff0; margin-top:10px;
+}
+</style>
+</head>
+<body>
+
+<div class="bg-animation"></div>
+
+<div class="center-container">
+  <div class="container">
+    <h1 class="typing-title">Context-Aware Access Control</h1>
+
+    <div class="login-card">
+      <input id="user" type="text" placeholder="User Identity">
+      <input id="pass" type="password" placeholder="Password">
+      <button onclick="loginPage()">Authenticate</button>
+      <p id="errorMsg"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+function loginPage(){
+  let user=document.getElementById("user").value;
+  let pass=document.getElementById("pass").value;
+
+  if(user==="admin" && pass==="1234"){
+    sessionStorage.setItem("identity",user);
+    sessionStorage.setItem("device",navigator.userAgent.includes("Mobile")?"Mobile Device":"Desktop Device");
+    sessionStorage.setItem("location","India");
+    let risk=(sessionStorage.getItem("device")==="Mobile Device")?"Medium":"Low";
+    sessionStorage.setItem("risk",risk);
+    sessionStorage.setItem("decision",(user==="admin" && risk!=="High")?"Access Granted":"Verification Required");
+
+    window.location.href="dashboard.html";
+  } else{
+    document.getElementById("errorMsg").innerText="Invalid username or password!";
+  }
+}
+</script>
+
+</body>
+</html>
